@@ -1,8 +1,3 @@
-# 🚀 Projeto Final – Data Warehouse com dbt
-
-Este projeto tem como objetivo construir um **Data Warehouse completo**, utilizando **PostgreSQL**, **dbt**, **Docker** e boas práticas de engenharia de dados.
-
----
 
 ## 1️⃣ Setup do Ambiente Local
 
@@ -240,14 +235,94 @@ Cria a pasta `dbt_packages/` com macros e testes reutilizáveis.
 
 dbt build --exclude-resource-type seed para não rodar seeds de novo
 
-# 3 - Airflow
-Instalar astro cli - https://www.astronomer.io/docs/astro/cli/install-cli
+---
+
+## 3️⃣ Airflow
+
+Instalar astro cli – https://www.astronomer.io/docs/astro/cli/install-cli
+
+```bash
 winget install -e --id Astronomer.Astro
+```
+
 Run astro version to confirm the Astro CLI is installed properly.
 
-
+```bash
 cd 3_airflow 
-
 astro dev init
+```
 
-# 4 - Deploy
+Adicionar no Dockerfile do airflow:
+
+```dockerfile
+RUN python -m venv dbt_venv \
+    && . dbt_venv/bin/activate \
+    && pip install --no-cache-dir dbt-postgres==1.9.0 \
+    && deactivate
+```
+
+Criar pasta no `3_airflow` chamada `dbt` para colocar o projeto e copiar a pasta `dw_bootcamp` do dbt para a pasta criada no airflow, arrasta com o ctrl para cima da outra pasta para copiar
+
+---
+
+-- Criar DAG airflow para rodar o fluxo de cargas do DW automaticamente
+criar arquivo na pasta de dags , dag.py
+
+---
+
+Criar  docker-compose.override.yml
+
+services:
+  scheduler:
+    volumes:
+      - ./dbt/dw_bootcamp:/usr/local/airflow/dbt/dw_bootcamp
+
+  dag-processor:
+    volumes:
+      - ./dbt/dw_bootcamp:/usr/local/airflow/dbt/dw_bootcamp
+
+
+depois rodar astro dev start 
+
+Matar porta 5432 se precisar
+
+airflow vai abrir a interface
+
+Vai dar erro na dag:
+
+Timestamp: 2025-12-14 18:44:01
+
+Traceback (most recent call last):
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/usr/local/airflow/dags/dag.py", line 10, in <module>
+    from cosmos import DbtDag, ProjectConfig, ProfileConfig, ExecutionConfig
+ModuleNotFoundError: No module named 'cosmos'
+
+----
+
+Adicionar conexão no airfloe do banco
+-docker_postgres_db
+-postgres
+host: host.docker.internal
+
+login: postgres
+senha: postgres
+porta: 5433
+schema: dbt_db
+
+adicionar astronomer-cosmos no requeriments.txt da pasta do airflow.
+
+astro dev stop
+astro dev start --no-cache
+
+
+rodar dag na interface do airflow
+
+---
+
+rodar documentação do dbt
+
+cd ..\2_data_warehouse\dw_bootcamp
+dbt deps
+dbt docs generate --target dev
+dbt docs serve --port 8085
