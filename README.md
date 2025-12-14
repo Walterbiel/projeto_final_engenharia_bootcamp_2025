@@ -8,6 +8,16 @@
 
 ---
 
+criar pastas 
+
+1_local_setup
+
+2_dw
+
+3_airflow
+
+---
+
 ## Setup via Terminal
 
 ```bash
