@@ -1,3 +1,8 @@
+# 🚀 Projeto Final – Data Warehouse com dbt, Docker e Airflow
+
+Este projeto tem como objetivo construir um **Data Warehouse completo**, utilizando **PostgreSQL**, **dbt**, **Docker** e **Airflow**, seguindo boas práticas de engenharia de dados.
+
+---
 
 ## 1️⃣ Setup do Ambiente Local
 
@@ -56,7 +61,7 @@ uv add dbt-core dbt-postgres duckdb faker pandas numpy
 
 ---
 
-## Docker
+## 🐳 Docker
 
 ### Docker Compose
 
@@ -74,7 +79,7 @@ DBT_USER=postgres
 DBT_PASSWORD=postgres
 ```
 
-Adicionar o `.env` ao `.gitignore`.
+Adicionar o arquivo `.env` ao `.gitignore`.
 
 ---
 
@@ -84,7 +89,7 @@ Adicionar o `.env` ao `.gitignore`.
 docker compose up -d
 ```
 
-Validar containers no Docker Desktop.
+Validar se o container está rodando no Docker Desktop.
 
 ---
 
@@ -102,17 +107,21 @@ Inicializar o projeto dbt:
 dbt init
 ```
 
-### Configuração Interativa
+---
 
-- Nome do projeto
-- Opção: PostgreSQL
-- Host: `localhost`
-- Porta: `5433`
-- User: conforme `.env`
-- Senha: conforme `.env`
-- Database: `dbt_db`
-- Schema: `public`
-- Threads: `4`
+### Configuração Interativa do dbt
+
+Durante a inicialização:
+
+- Nome do projeto  
+- Opção: PostgreSQL  
+- Host: `localhost`  
+- Porta: `5433`  
+- User: conforme `.env`  
+- Senha: conforme `.env`  
+- Database: `dbt_db`  
+- Schema: `public`  
+- Threads: `4`  
 
 ---
 
@@ -127,7 +136,7 @@ dbt debug
 
 ## Seeds
 
-- Colocar arquivos CSV em `seeds/`
+- Colocar arquivos CSV dentro da pasta `seeds/`
 - Seeds representam dados de origem para estudo e testes
 
 ---
@@ -175,19 +184,13 @@ models/
 └── mart
 ```
 
-- **staging**: limpeza e padronização
-- **intermediate**: fatos e dimensões
-- **mart**: modelos finais para análise
+- **staging**: limpeza e padronização dos dados
+- **intermediate**: criação de fatos e dimensões
+- **mart**: modelos finais prontos para análise
 
 ---
 
-## Documentação (Opcional)
-
-Criar `_stg_models.yml` para documentação e testes.
-
----
-
-## Execução
+## Execução do dbt
 
 Pipeline completo:
 
@@ -195,17 +198,23 @@ Pipeline completo:
 dbt build
 ```
 
-Modelo específico:
+Rodar apenas um modelo específico:
 
 ```bash
 dbt run -s stg_airline_delay_cause
+```
+
+Para rodar sem executar seeds novamente:
+
+```bash
+dbt build --exclude-resource-type seed
 ```
 
 ---
 
 ## Pacotes do dbt
 
-Criar `packages.yml`:
+Criar o arquivo `packages.yml`:
 
 ```yml
 packages:
@@ -217,7 +226,7 @@ packages:
     version: "0.10.8"
 ```
 
-Instalar dependências:
+Instalar os pacotes:
 
 ```bash
 dbt deps
@@ -225,34 +234,26 @@ dbt deps
 
 ---
 
-## O que é `dbt deps`
-
-Comando responsável por baixar e instalar pacotes definidos em `packages.yml`.
-
-Cria a pasta `dbt_packages/` com macros e testes reutilizáveis.
-
-----
-
-dbt build --exclude-resource-type seed para não rodar seeds de novo
-
----
-
 ## 3️⃣ Airflow
 
-Instalar astro cli – https://www.astronomer.io/docs/astro/cli/install-cli
+Instalar o Astro CLI:
 
 ```bash
 winget install -e --id Astronomer.Astro
 ```
 
-Run astro version to confirm the Astro CLI is installed properly.
+Inicializar o Airflow:
 
 ```bash
-cd 3_airflow 
+cd 3_airflow
 astro dev init
 ```
 
-Adicionar no Dockerfile do airflow:
+---
+
+### Dockerfile do Airflow
+
+Adicionar:
 
 ```dockerfile
 RUN python -m venv dbt_venv \
@@ -261,17 +262,11 @@ RUN python -m venv dbt_venv \
     && deactivate
 ```
 
-Criar pasta no `3_airflow` chamada `dbt` para colocar o projeto e copiar a pasta `dw_bootcamp` do dbt para a pasta criada no airflow, arrasta com o ctrl para cima da outra pasta para copiar
-
 ---
 
--- Criar DAG airflow para rodar o fluxo de cargas do DW automaticamente
-criar arquivo na pasta de dags , dag.py
+### Docker Compose Override
 
----
-
-Criar  docker-compose.override.yml
-
+```yml
 services:
   scheduler:
     volumes:
@@ -280,49 +275,14 @@ services:
   dag-processor:
     volumes:
       - ./dbt/dw_bootcamp:/usr/local/airflow/dbt/dw_bootcamp
-
-
-depois rodar astro dev start 
-
-Matar porta 5432 se precisar
-
-airflow vai abrir a interface
-
-Vai dar erro na dag:
-
-Timestamp: 2025-12-14 18:44:01
-
-Traceback (most recent call last):
-  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
-  File "/usr/local/airflow/dags/dag.py", line 10, in <module>
-    from cosmos import DbtDag, ProjectConfig, ProfileConfig, ExecutionConfig
-ModuleNotFoundError: No module named 'cosmos'
-
-----
-
-Adicionar conexão no airfloe do banco
--docker_postgres_db
--postgres
-host: host.docker.internal
-
-login: postgres
-senha: postgres
-porta: 5433
-schema: dbt_db
-
-adicionar astronomer-cosmos no requeriments.txt da pasta do airflow.
-
-astro dev stop
-astro dev start --no-cache
-
-
-rodar dag na interface do airflow
+```
 
 ---
 
-rodar documentação do dbt
+### Documentação do dbt
 
+```bash
 cd ..\2_data_warehouse\dw_bootcamp
-dbt deps
 dbt docs generate --target dev
 dbt docs serve --port 8085
+```
