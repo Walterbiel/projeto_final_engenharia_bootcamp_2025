@@ -239,3 +239,15 @@ Cria a pasta `dbt_packages/` com macros e testes reutilizáveis.
 ----
 
 dbt build --exclude-resource-type seed para não rodar seeds de novo
+
+# 3 - Airflow
+Instalar astro cli - https://www.astronomer.io/docs/astro/cli/install-cli
+winget install -e --id Astronomer.Astro
+Run astro version to confirm the Astro CLI is installed properly.
+
+
+cd 3_airflow 
+
+astro dev init
+
+# 4 - Deploy
