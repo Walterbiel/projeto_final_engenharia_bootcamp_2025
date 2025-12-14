@@ -80,3 +80,8 @@ dbt init
 - threads = 4
 
 Message reecbida: Profile dw_bootcamp written to C:\Users\Walter\.dbt\profiles.yml using target's profile_template.yml and your supplied values. Run 'dbt debug' to validate the connection.
+
+- Entrar na pasta do projeto dbt: dw_bootcamp
+cd dw_bootcamp
+
+dbt debug
