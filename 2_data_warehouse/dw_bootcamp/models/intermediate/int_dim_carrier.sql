@@ -9,4 +9,4 @@ select
     carrier                              as carrier_id,
     max(carrier_name)                    as carrier_name
 from base
-group by carrier;
+group by carrier

@@ -25,4 +25,4 @@ select
     case when total_delay = 0 then 0 else 1.0 * security_delay / total_delay end      as pct_security,
     case when total_delay = 0 then 0 else 1.0 * late_aircraft_delay / total_delay end as pct_late_aircraft
 
-from by_month;
+from by_month

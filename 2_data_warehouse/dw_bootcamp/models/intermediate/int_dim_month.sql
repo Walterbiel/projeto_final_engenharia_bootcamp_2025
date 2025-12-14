@@ -10,4 +10,4 @@ select
     year_month_key                     as month_id,
     year,
     month
-from base;
+from base

@@ -16,4 +16,4 @@ unpivoted as (
 
 )
 
-select * from unpivoted;
+select * from unpivoted

@@ -26,4 +26,4 @@ select
 from fct f
 join dim_month m
   on f.month_id = m.month_id
-group by 1,2,3;
+group by 1,2,3

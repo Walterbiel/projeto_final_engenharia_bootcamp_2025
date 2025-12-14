@@ -22,4 +22,4 @@ select
 from fct f
 join dim_carrier c
   on f.carrier_id = c.carrier_id
-group by 1,2;
+group by 1,2

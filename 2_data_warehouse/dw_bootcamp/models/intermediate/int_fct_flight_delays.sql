@@ -33,4 +33,4 @@ fct as (
     from stg
 )
 
-select * from fct;
+select * from fct

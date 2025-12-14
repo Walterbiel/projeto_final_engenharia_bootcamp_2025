@@ -9,4 +9,4 @@ select
     airport                              as airport_id,
     max(airport_name)                    as airport_name
 from base
-group by airport;
+group by airport

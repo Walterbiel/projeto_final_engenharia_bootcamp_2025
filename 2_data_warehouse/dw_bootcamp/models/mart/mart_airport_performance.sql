@@ -22,4 +22,4 @@ select
 from fct f
 join dim_airport a
   on f.airport_id = a.airport_id
-group by 1,2;
+group by 1,2
